@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mano Peixe - ChatBot Santos FC</title>
-    <!-- Google Fonts - Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
     <main class="dashboard-container">
         <!-- Painel Lateral: Mascote & Controles -->
@@ -21,38 +23,89 @@
                 <h2>MANO PEIXE</h2>
                 <p class="panel-subtitle">A Voz da Arquibancada da Vila</p>
             </header>
-            
+
             <div class="mascot-wrapper">
                 <img id="mascot-img" src="santos_mascot.png" alt="Mascote Tubarão Santista">
+                <div class="mascot-pulse-ring"></div>
             </div>
-            
+
+            <!-- Stats rápidos -->
+            <div class="stats-row">
+                <div class="stat-chip">
+                    <span class="stat-value" id="msg-count">0</span>
+                    <span class="stat-label">Mensagens</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-chip">
+                    <span class="stat-value">Vila</span>
+                    <span class="stat-label">Estádio</span>
+                </div>
+            </div>
+
             <div id="controles" class="control-box">
-                <button id="iniciarBtn" class="btn btn-connect">Colar no Jogo</button>
-                <button id="limparBtn" class="btn btn-clean">Limpar Conversa</button>
-                <button id="encerrarBtn" class="btn btn-disconnect">Sair de Fininho</button>
+                <button id="iniciarBtn" class="btn btn-connect">
+                    <svg class="btn-icon" viewBox="0 0 24 24">
+                        <path
+                            d="M17 12h-5v5h5v-5zM16 1v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2h-1V1h-2zm3 18H5V8h14v11z" />
+                    </svg>
+                    Colar no Jogo
+                </button>
+                <button id="limparBtn" class="btn btn-clean">
+                    <svg class="btn-icon" viewBox="0 0 24 24">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                    </svg>
+                    Limpar Conversa
+                </button>
+                <button id="encerrarBtn" class="btn btn-disconnect">
+                    <svg class="btn-icon" viewBox="0 0 24 24">
+                        <path
+                            d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z" />
+                    </svg>
+                    Sair de Fininho
+                </button>
             </div>
+
+            <p class="left-footer">Santos FC · Fundado 1912</p>
         </section>
 
         <!-- Painel Principal: Janela de Chat -->
         <section class="panel right-panel">
             <header class="chat-header">
-                <div class="chat-header-info">
-                    <h1>Alçapão Chat</h1>
-                    <p class="chat-header-sub">Papo Reto Caiçara</p>
+                <div class="chat-header-left">
+                    <div class="bot-avatar-header">🦈</div>
+                    <div class="chat-header-info">
+                        <h1>Alçapão Chat</h1>
+                        <p class="chat-header-sub">Papo Reto Caiçara</p>
+                    </div>
                 </div>
                 <div class="status-indicator">
                     <span class="status-dot"></span>
                     <div id="connection-status" class="status-offline">Offline</div>
                 </div>
             </header>
-            
+
             <div id="chat-box" class="chat-box">
-                <!-- As mensagens serão inseridas aqui dinamicamente -->
+                <!-- Empty state -->
+                <div class="empty-state" id="empty-state">
+                    <div class="empty-icon">⚽</div>
+                    <p class="empty-title">Ninguém no papo ainda</p>
+                    <p class="empty-sub">Clique em "Colar no Jogo" e manda a letra pro Mano Peixe!</p>
+                </div>
             </div>
-            
+
+            <!-- Typing indicator (fora do chat-box para posicionamento fixo) -->
+            <div id="typing-indicator" class="typing-indicator hidden">
+                <div class="bot-avatar-small">🦈</div>
+                <div class="typing-bubble">
+                    <span></span><span></span><span></span>
+                </div>
+                <span class="typing-label">Mano Peixe tá pensando…</span>
+            </div>
+
             <footer class="chat-input-area">
-                <input type="text" id="message-input" placeholder="Manda a letra aqui, parça..." autocomplete="off">
-                <button id="send-button">
+                <input type="text" id="message-input" placeholder="Manda a letra aqui, parça..." autocomplete="off"
+                    disabled>
+                <button id="send-button" disabled>
                     <svg viewBox="0 0 24 24" class="send-icon">
                         <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" />
                     </svg>
@@ -61,9 +114,23 @@
         </section>
     </main>
 
-    <!-- Scripts de dependência -->
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="script.js"></script>
+
+    <!-- Contador de mensagens (hook simples, independente do script.js) -->
+    <script>
+        const chatBox = document.getElementById('chat-box');
+        const emptyState = document.getElementById('empty-state');
+        const msgCount = document.getElementById('msg-count');
+
+        const observer = new MutationObserver(() => {
+            const msgs = chatBox.querySelectorAll('.message').length;
+            if (msgCount) msgCount.textContent = msgs;
+            if (emptyState) emptyState.style.display = msgs > 0 ? 'none' : 'flex';
+        });
+        observer.observe(chatBox, { childList: true, subtree: true });
+    </script>
 </body>
+
 </html>
