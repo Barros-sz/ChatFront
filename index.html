@@ -3,37 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatbot com Flask-SocketIO</title>
+    <title>Mano Peixe - ChatBot Santos FC</title>
+    <!-- Google Fonts - Outfit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="chat-container">
-      <figure>
-          <img src="https://img.freepik.com/vetores-premium/chatbot-rede-neural-ai-servidores-e-tecnologia-de-robos-cute-chatbot-ai-personagem_651808-563.jpg?semt=ais_hybrid&w=740">
-      </figure>
-        <div id="controles">
-            <button id="iniciarBtn">Iniciar conversa</button>
-            <button id="limparBtn">Limpar tela</button>
-            <button id="encerrarBtn">Encerrar conversa</button>
-      </div>
-    </div>
-
-    <div class="chat-container">
-        <header class="chat-header">
-            <h1>Chatbot Amigável</h1>
-            <div id="connection-status" class="status-offline">Conectando...</div>
-        </header>
-        <div id="chat-box" class="chat-box">
+    <main class="dashboard-container">
+        <!-- Painel Lateral: Mascote & Controles -->
+        <section class="panel left-panel">
+            <header class="panel-header">
+                <div class="logo-wrapper">
+                    <span class="club-badge">SFC</span>
+                </div>
+                <h2>MANO PEIXE</h2>
+                <p class="panel-subtitle">A Voz da Arquibancada da Vila</p>
+            </header>
+            
+            <div class="mascot-wrapper">
+                <img id="mascot-img" src="santos_mascot.png" alt="Mascote Tubarão Santista">
             </div>
-        <footer class="chat-input-area">
-            <input type="text" id="message-input" placeholder="Digite sua mensagem aqui...">
-            <button id="send-button">Enviar</button>
-        </footer>
-    </div>
+            
+            <div id="controles" class="control-box">
+                <button id="iniciarBtn" class="btn btn-connect">Colar no Jogo</button>
+                <button id="limparBtn" class="btn btn-clean">Limpar Conversa</button>
+                <button id="encerrarBtn" class="btn btn-disconnect">Sair de Fininho</button>
+            </div>
+        </section>
 
+        <!-- Painel Principal: Janela de Chat -->
+        <section class="panel right-panel">
+            <header class="chat-header">
+                <div class="chat-header-info">
+                    <h1>Alçapão Chat</h1>
+                    <p class="chat-header-sub">Papo Reto Caiçara</p>
+                </div>
+                <div class="status-indicator">
+                    <span class="status-dot"></span>
+                    <div id="connection-status" class="status-offline">Offline</div>
+                </div>
+            </header>
+            
+            <div id="chat-box" class="chat-box">
+                <!-- As mensagens serão inseridas aqui dinamicamente -->
+            </div>
+            
+            <footer class="chat-input-area">
+                <input type="text" id="message-input" placeholder="Manda a letra aqui, parça..." autocomplete="off">
+                <button id="send-button">
+                    <svg viewBox="0 0 24 24" class="send-icon">
+                        <path d="M2,21L23,12L2,3V10L17,12L2,14V21Z" />
+                    </svg>
+                </button>
+            </footer>
+        </section>
+    </main>
+
+    <!-- Scripts de dependência -->
     <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
-  

@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const encerrarBtn = document.getElementById('encerrarBtn');
     const limparBtn = document.getElementById('limparBtn');
 
-    let userSessionId = null;
+    let userSessionId = sessionStorage.getItem('santos_chat_session_id') || null;
 
     // Função para adicionar mensagens no chat
     function addMessageToChat(sender, text, type = 'normal') {
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sender = 'Você';
         } else if (sender.toLowerCase() === 'bot') {
             messageElement.classList.add('bot-message');
-            sender = 'Bot';
+            sender = 'Mano Peixe';
         } else {
             messageElement.classList.add('status-message');
         }
@@ -72,27 +72,32 @@ document.addEventListener('DOMContentLoaded', () => {
     function iniciarConversa() {
         if (socket && socket.connected) return;
 
-        socket = io(URL_BACKEND);
+        socket = io(URL_BACKEND, {
+            query: {
+                session_id: userSessionId || ''
+            }
+        });
 
         socket.on('connect', () => {
             console.log('Conectado ao servidor Socket.IO! SID:', socket.id);
-            connectionStatus.textContent = 'Conectado';
+            connectionStatus.textContent = 'Online';
             connectionStatus.className = 'status-online';
-            addMessageToChat('Status', 'Conectado ao servidor de chat.', 'status');
+            addMessageToChat('Status', 'Conectado ao Alçapão da Vila!', 'status');
             setChatEnabled(true);
         });
 
         socket.on('disconnect', () => {
             console.log('Desconectado do servidor Socket.IO.');
-            connectionStatus.textContent = 'Desconectado';
+            connectionStatus.textContent = 'Offline';
             connectionStatus.className = 'status-offline';
-            addMessageToChat('Status', 'Você foi desconectado.', 'status');
+            addMessageToChat('Status', 'Você saiu da arquibancada.', 'status');
             setChatEnabled(false);
         });
 
         socket.on('status_conexao', (data) => {
             if (data.session_id) {
                 userSessionId = data.session_id;
+                sessionStorage.setItem('santos_chat_session_id', userSessionId);
             }
         });
 
@@ -109,9 +114,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function encerrarConversa() {
         if (socket && socket.connected) {
             socket.disconnect();
-            setChatEnabled(false);
-            addMessageToChat('Status', 'Conversa encerrada pelo usuário.', 'status');
         }
+        // Limpa a sessão do sessionStorage para começar um chat limpo na próxima vez
+        userSessionId = null;
+        sessionStorage.removeItem('santos_chat_session_id');
+        setChatEnabled(false);
+        addMessageToChat('Status', 'Conversa encerrada. Histórico limpo.', 'status');
     }
 
     // Função para limpar as mensagens da tela
