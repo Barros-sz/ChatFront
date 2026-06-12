@@ -7,8 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageInput = document.getElementById('message-input');
     const sendButton = document.getElementById('send-button');
     const connectionStatus = document.getElementById('connection-status');
-    const iniciarBtn = document.getElementById('iniciarBtn');
-    const encerrarBtn = document.getElementById('encerrarBtn');
     const limparBtn = document.getElementById('limparBtn');
 
     let userSessionId = sessionStorage.getItem('santos_chat_session_id') || null;
@@ -66,7 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
     setChatEnabled(false);
     connectionStatus.textContent = 'Desconectado';
     connectionStatus.className = 'status-offline';
-    addMessageToChat('Status', 'Clique em "Colar no Jogo" para começar.', 'status');
+    const indicator = connectionStatus.closest('.status-indicator');
+    if (indicator) {
+        indicator.classList.add('status-offline');
+        indicator.classList.remove('status-online');
+    }
+    addMessageToChat('Status', 'Conectando ao Alçapão da Vila...', 'status');
 
     // Função para conectar ao servidor
     function iniciarConversa() {
@@ -75,22 +78,49 @@ document.addEventListener('DOMContentLoaded', () => {
         socket = io(URL_BACKEND, {
             query: {
                 session_id: userSessionId || ''
-            }
+            },
+            reconnection: true,
+            reconnectionAttempts: Infinity,
+            reconnectionDelay: 1000,
+            reconnectionDelayMax: 5000,
+            timeout: 20000
         });
 
         socket.on('connect', () => {
             console.log('Conectado ao servidor Socket.IO! SID:', socket.id);
-            connectionStatus.textContent = 'Online';
+            connectionStatus.textContent = 'Conectado';
             connectionStatus.className = 'status-online';
+            const indicator = connectionStatus.closest('.status-indicator');
+            if (indicator) {
+                indicator.classList.add('status-online');
+                indicator.classList.remove('status-offline');
+            }
             addMessageToChat('Status', 'Conectado ao Alçapão da Vila!', 'status');
             setChatEnabled(true);
         });
 
         socket.on('disconnect', () => {
             console.log('Desconectado do servidor Socket.IO.');
-            connectionStatus.textContent = 'Offline';
+            connectionStatus.textContent = 'Desconectado';
             connectionStatus.className = 'status-offline';
-            addMessageToChat('Status', 'Você saiu da arquibancada.', 'status');
+            const indicator = connectionStatus.closest('.status-indicator');
+            if (indicator) {
+                indicator.classList.add('status-offline');
+                indicator.classList.remove('status-online');
+            }
+            addMessageToChat('Status', 'Conexão perdida. Tentando reconectar...', 'status');
+            setChatEnabled(false);
+        });
+
+        socket.on('connect_error', (error) => {
+            console.log('Erro de conexão com o servidor:', error);
+            connectionStatus.textContent = 'Desconectado';
+            connectionStatus.className = 'status-offline';
+            const indicator = connectionStatus.closest('.status-indicator');
+            if (indicator) {
+                indicator.classList.add('status-offline');
+                indicator.classList.remove('status-online');
+            }
             setChatEnabled(false);
         });
 
@@ -108,18 +138,6 @@ document.addEventListener('DOMContentLoaded', () => {
         socket.on('erro', (data) => {
             addMessageToChat('Erro', data.erro, 'error');
         });
-    }
-
-    // Função para encerrar a conversa
-    function encerrarConversa() {
-        if (socket && socket.connected) {
-            socket.disconnect();
-        }
-        // Limpa a sessão do sessionStorage para começar um chat limpo na próxima vez
-        userSessionId = null;
-        sessionStorage.removeItem('santos_chat_session_id');
-        setChatEnabled(false);
-        addMessageToChat('Status', 'Conversa encerrada. Histórico limpo.', 'status');
     }
 
     // Função para limpar as mensagens da tela
@@ -144,14 +162,22 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Eventos dos botões
-    iniciarBtn.addEventListener('click', iniciarConversa);
-    encerrarBtn.addEventListener('click', encerrarConversa);
     limparBtn.addEventListener('click', limparTela);
     sendButton.addEventListener('click', sendMessageToServer);
 
     messageInput.addEventListener('keypress', (event) => {
         if (event.key === 'Enter') {
             sendMessageToServer();
+        }
+    });
+
+    // Iniciar conexão automaticamente
+    iniciarConversa();
+
+    // Desconectar quando a página for fechada
+    window.addEventListener('beforeunload', () => {
+        if (socket && socket.connected) {
+            socket.disconnect();
         }
     });
 });
