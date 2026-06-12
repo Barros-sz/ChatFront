@@ -66,7 +66,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setChatEnabled(false);
     connectionStatus.textContent = 'Desconectado';
     connectionStatus.className = 'status-offline';
-    addMessageToChat('Status', 'Clique em "Iniciar conversa" para começar.', 'status');
+    addMessageToChat('Status', 'Clique em "Colar no Jogo" para começar.', 'status');
 
     // Função para conectar ao servidor
     function iniciarConversa() {
