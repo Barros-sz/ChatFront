@@ -1,4 +1,4 @@
-const URL_BACKEND = 'http://localhost:5000' 
+const URL_BACKEND = 'https://chatback-09lx.onrender.com' 
 
 document.addEventListener('DOMContentLoaded', () => {
     let socket = null;
